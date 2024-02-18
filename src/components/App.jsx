@@ -14,7 +14,7 @@ export default class App extends Component {
     searchQuery: '',
     currentPage: 1,
     isOpen: false,
-    imageModal: {},
+    largeImage: {},
     status: STATUSES.idle,
   };
 
@@ -37,12 +37,15 @@ export default class App extends Component {
           resultLength: res.data.totalHits,
         }))
       )
-      .catch(error => this.setState({ error, status: STATUSES.error }));
+      .catch(error => {
+        this.setState({ error, status: STATUSES.error });
+        alert(error.message);
+      });
   };
 
   handleSubmit = value => {
     if (this.state.searchQuery.toLowerCase() === value.toLowerCase()) {
-      alert('Try to search with new value, this already on you page');
+      alert("Try to find something else, it's already on your page");
       return;
     }
     if (this.state.searchQuery !== value) {
@@ -53,7 +56,7 @@ export default class App extends Component {
 
   setModalImg = ({ tags, largeImageURL }) => {
     this.setState({
-      imageModal: { largeImageURL, tags },
+      largeImage: { largeImageURL, tags },
       isOpen: true,
     });
   };
@@ -67,13 +70,13 @@ export default class App extends Component {
   };
 
   render() {
-    const { isOpen, imageModal, status, images, resultLength } = this.state;
+    const { isOpen, largeImage, status, images, resultLength } = this.state;
 
     return (
       <div className="App">
         {isOpen && (
           <Modal toggleModal={this.toggleModal}>
-            <img src={imageModal.largeImageURL} alt={imageModal.tag} />
+            <img src={largeImage.largeImageURL} alt={largeImage.tag} />
           </Modal>
         )}
         {status === 'loading' && (
@@ -91,10 +94,6 @@ export default class App extends Component {
             ) : (
               <>
                 <h1>There are no images for your request</h1>
-                <p>
-                  Sorry, we couldn't find any images that match your search.
-                  Please try again with different keywords.
-                </p>
               </>
             )}
           </div>
